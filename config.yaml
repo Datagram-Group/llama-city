@@ -1,2 +1,2 @@
-grpc_port: 50051
-websocket_port: 8080
+GRPCServerPort: "50051"
+WebSocketServerPort: "8080"

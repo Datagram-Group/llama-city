@@ -1,14 +1,29 @@
 package config
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/spf13/viper"
 )
 
-func LoadConfig() {
-	viper.SetConfigFile("../../config.yaml")
+type Config struct {
+	GRPCServerPort      string
+	WebSocketServerPort string
+}
+
+func LoadConfig() (Config, error) {
+	var config Config
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("../")
+
 	if err := viper.ReadInConfig(); err != nil {
-		log.Fatalf("Error reading config file, %s", err)
+		return config, fmt.Errorf("error reading configuration file: %v", err)
 	}
+
+	if err := viper.Unmarshal(&config); err != nil {
+		return config, fmt.Errorf("error unmarshalling configuration: %v", err)
+	}
+
+	return config, nil
 }
