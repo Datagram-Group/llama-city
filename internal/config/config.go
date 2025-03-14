@@ -11,19 +11,17 @@ type Config struct {
 	WebSocketServerPort string
 }
 
-func LoadConfig() (Config, error) {
-	var config Config
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("../")
+func LoadConfig(configFilePath string) (*Config, error) {
+	viper.SetConfigFile(configFilePath)
 
 	if err := viper.ReadInConfig(); err != nil {
-		return config, fmt.Errorf("error reading configuration file: %v", err)
+		return nil, fmt.Errorf("failed to read config file: %w", err)
 	}
 
+	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
-		return config, fmt.Errorf("error unmarshalling configuration: %v", err)
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	return config, nil
+	return &config, nil
 }

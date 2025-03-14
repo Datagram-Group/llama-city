@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"llama-city/internal/config"
 	"llama-city/internal/grpc"
 	"llama-city/internal/message"
@@ -10,13 +11,17 @@ import (
 )
 
 func main() {
-	config, err := config.LoadConfig()
+	configPath := flag.String("config", "../config.yaml", "Path to the config file")
+
+	flag.Parse()
+
+	cfg, err := config.LoadConfig(*configPath)
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	go grpc.StartGRPCServer(config.GRPCServerPort)
-	go websocket.StartWebSocketServer(config.WebSocketServerPort)
+	go grpc.StartGRPCServer(cfg.GRPCServerPort)
+	go websocket.StartWebSocketServer(cfg.WebSocketServerPort)
 	go message.HandleMessages()
 
 	select {}
