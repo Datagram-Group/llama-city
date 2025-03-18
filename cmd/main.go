@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	configPath := flag.String("config", "../config.yaml", "Path to the config file")
+	configPath := flag.String("config", "./config.yaml", "Path to the config file")
 
 	flag.Parse()
 
