@@ -5,7 +5,6 @@ conf.json
 bin
 .air.toml
 tmp
-Dockerfile
 docker-compose.yml
 config.yaml
 imgs
