@@ -1,7 +1,9 @@
 package websocket
 
 import (
+	"encoding/json"
 	"fmt"
+	"llama-city/internal/grpc"
 	"llama-city/pkg/constant"
 	"log"
 	"net/http"
@@ -26,6 +28,9 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
+	// Log successful WebSocket connection
+	log.Println("WebSocket connection established with:", conn.RemoteAddr())
+
 	// Register new connection
 	constant.RegisterClient(conn)
 	defer constant.UnregisterClient(conn)
@@ -37,33 +42,32 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 // Process WebSocket messages
 func processWebSocketMessages(conn *websocket.Conn) {
 	for {
-		_, _, err := conn.ReadMessage()
+		// Read message from WebSocket connection
+		_, msg, err := conn.ReadMessage()
 		if err != nil {
 			log.Println("Read failed:", err)
 			break
 		}
-		// fmt.Println("Received WebSocket message:", string(msg))
 
-		// Send response in JSON format
-		err = sendWebSocketResponse(conn)
+		// Log the received message
+		fmt.Printf("Received message from client: %s\n", string(msg))
+
+		// Define a struct for expected message structure
+		var receivedMessage map[string]string
+		err = json.Unmarshal(msg, &receivedMessage)
 		if err != nil {
+			log.Println("Error unmarshalling message:", err)
 			break
 		}
-	}
-}
 
-// Send WebSocket response
-func sendWebSocketResponse(conn *websocket.Conn) error {
-	response := map[string]string{
-		"status":  "ACK",
-		"message": "Received message",
+		// Check for "Ack message" content
+		if ackMessage, exists := receivedMessage["Ack message"]; exists {
+			if ackMessage == "Find" {
+				go grpc.ResponseAckFind()
+				// constant.WorkerFound <- true
+			}
+		}
 	}
-	err := conn.WriteJSON(response)
-	if err != nil {
-		log.Println("Error writing message to client:", err)
-		return err
-	}
-	return nil
 }
 
 // Create WebSocket connection

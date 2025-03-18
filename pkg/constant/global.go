@@ -25,3 +25,7 @@ func UnregisterClient(conn *websocket.Conn) {
 	delete(Clients, conn)
 	Mutex.Unlock()
 }
+
+var (
+	WorkerFound = make(chan bool, 1)
+)

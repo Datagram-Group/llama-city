@@ -27,7 +27,11 @@ func (s *server) SendMessage(ctx context.Context, req *chat.ChatRequest) (*chat.
 	// Add message to channel to broadcast to all WebSocket clients
 	constant.Broadcast <- message
 
-	return &chat.ChatResponse{AckMessage: "ACK Find"}, nil
+	return &chat.ChatResponse{AckMessage: "ACK Find Worker"}, nil
+}
+
+func ResponseAckFind() *chat.ChatResponse {
+	return &chat.ChatResponse{AckMessage: "ACK Find Worker"}
 }
 
 // Function to start gRPC server
