@@ -3,12 +3,12 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"log"
+	"net"
+
 	"llama-city/internal/message"
 	chat "llama-city/internal/proto"
 	"llama-city/pkg/constant"
-
-	"log"
-	"net"
 
 	"google.golang.org/grpc"
 )
